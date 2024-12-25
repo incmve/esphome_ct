@@ -1,10 +1,10 @@
 #include "esphome/core/log.h"
-#include "cc1101_fan.h"
+#include "fan.h"
 #include "IthoCC1101.h"
 #include "Ticker.h"
 
 namespace esphome {
-namespace cc1101 {
+namespace cc1101fan {
 
 IthoCC1101 rf;
 void ITHOinterrupt() IRAM_ATTR;
@@ -27,7 +27,7 @@ String LastID = "";
 #define Time3      30*60
 
 
-void CC1101::setup() {
+void CC1101Fan::setup() {
   auto restore = this->restore_state_();
   if (restore.has_value()) {
     ESP_LOGD("cc1101_fan", "restoring");
@@ -37,14 +37,14 @@ void CC1101::setup() {
   this->data_pin_->setup();
 
   rf.init();
-  //this->data_pin_->attach_interrupt(CC1101::ITHOinterrupt, RISING);
+  //this->data_pin_->attach_interrupt(CC1101Fan::ITHOinterrupt, RISING);
   // Init CC1101
   pinMode(D1, INPUT);
-  attachInterrupt(D1, CC1101::ITHOinterrupt, RISING);
+  attachInterrupt(D1, CC1101Fan::ITHOinterrupt, RISING);
   rf.initReceive();
 }
 
-void CC1101::update() {
+void CC1101Fan::update() {
 /*
     // Only publish if the state has changed
     if (fantimer->state != String(Timer).c_str()) {
@@ -57,14 +57,14 @@ void CC1101::update() {
 */
 }
 
-void CC1101::publish_state() {
+void CC1101Fan::publish_state() {
   this->state =  this->Speed;
   ESP_LOGD("cc1101_fan", "Publishing state: %d", this->state);
   this->state_callback_(); // Notify ESPHome about the state change
 
 }
 
-fan::FanTraits CC1101::get_traits() {
+fan::FanTraits CC1101Fan::get_traits() {
     fan::FanTraits traits;
     traits.set_speed(true);  // The fan supports speed control
     traits.set_supported_speed_count(this->speed_count_);  // Number of speeds
@@ -74,7 +74,7 @@ fan::FanTraits CC1101::get_traits() {
   //return fan::FanTraits(this->oscillation_id_.has_value(), this->speed_id_.has_value(), this->direction_id_.has_value(),
 }
 
-void CC1101::control(const fan::FanCall &call) {
+void CC1101Fan::control(const fan::FanCall &call) {
   auto State = call.get_state() ? "ON" : "OFF";
   auto Speed = call.get_speed().has_value() ? *call.get_speed() : -1;
   ESP_LOGD("cc1101_fan", "Call state: %s, speed: %d", State, Speed);
@@ -101,7 +101,7 @@ void CC1101::control(const fan::FanCall &call) {
   }
 }
 
-void CC1101::set_fan_speed(int speed) {
+void CC1101Fan::set_fan_speed(int speed) {
   ESP_LOGD("cc1101_fan", "RF called witht %d while last is %d and speed assumed at %d", speed, this->LastSpeed, this->Speed);
   if (speed != this->LastSpeed ) {
     // Handle speed control
@@ -132,15 +132,15 @@ void CC1101::set_fan_speed(int speed) {
 }
 
 
-void CC1101::set_output(void *output) {
+void CC1101Fan::set_output(void *output) {
   // No-op: This method is required by the ESPHome build system but is unused.
 }
 
-void IRAM_ATTR CC1101::ITHOinterrupt() {
-	ITHOticker.once_ms(10, CC1101::ITHOcheck);
+void IRAM_ATTR CC1101Fan::ITHOinterrupt() {
+	ITHOticker.once_ms(10, CC1101Fan::ITHOcheck);
 }
 
-void CC1101::ITHOcheck() {
+void CC1101Fan::ITHOcheck() {
   noInterrupts();
   if (rf.checkForNewPacket()) {
     IthoCommand cmd = rf.getLastCommand();
@@ -189,5 +189,5 @@ void CC1101::ITHOcheck() {
   interrupts();
 };
 
-} // namespace cc1101
+} // namespace cc1101fan
 } // namespace esphome

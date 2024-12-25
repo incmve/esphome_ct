@@ -3,11 +3,11 @@
 #include "esphome/components/fan/fan.h"
 
 namespace esphome {
-namespace cc1101 {
+namespace cc1101fan {
 
-class CC1101 : public PollingComponent, public fan::Fan {
+class CC1101Fan : public PollingComponent, public fan::Fan {
  public:
-  CC1101(int speed_count, bool map_off_to_zero) : speed_count_(speed_count), map_off_to_zero_(map_off_to_zero) {}
+  CC1101Fan(int speed_count, bool map_off_to_zero) : speed_count_(speed_count), map_off_to_zero_(map_off_to_zero) {}
   void set_data_pin(InternalGPIOPin *data_pin) { data_pin_ = data_pin; }
   void setup() override;
   void update() override;
@@ -29,9 +29,9 @@ class CC1101 : public PollingComponent, public fan::Fan {
   std::set<std::string> preset_modes_{};
   int Speed = -1;
   int LastSpeed = -1;
-  //static CC1101 *instance_;
+  //static CC1101Fan *instance_;
 };
 
-} // namespace CC1101Fan
+} // namespace cc1101fan
 } // namespace esphome
 

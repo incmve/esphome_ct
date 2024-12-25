@@ -6,8 +6,8 @@ from esphome.cpp_helpers import gpio_pin_expression
 
 from esphome.const import CONF_DISABLED_BY_DEFAULT, CONF_NAME, CONF_OUTPUT_ID, CONF_DATA_PIN, CONF_PRESET_MODES, CONF_RESTORE_MODE, CONF_SPEED_COUNT
 
-cc1101_ns = cg.esphome_ns.namespace("cc1101")
-CC1101 = cc1101_ns.class_("CC1101", cg.PollingComponent, fan.Fan)
+cc1101fan_ns = cg.esphome_ns.namespace("cc1101fan")
+CC1101Fan = cc1101_ns.class_("CC1101Fan", cg.PollingComponent, fan.Fan)
 
 MAP_OFF_TO_ZERO = "map_off_to_zero"
 
@@ -18,7 +18,7 @@ FAN_RESTORE_MODE_OPTIONS = {
 }
 
 CONFIG_SCHEMA = fan.FAN_SCHEMA.extend({
-  cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(CC1101),
+  cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(CC1101Fan),
   cv.Required(CONF_DATA_PIN): cv.All(pins.internal_gpio_input_pin_schema),
   cv.Required(MAP_OFF_TO_ZERO): cv.boolean,
   cv.Optional(CONF_NAME, default="Domestic Fan"): str,
