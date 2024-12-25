@@ -4,9 +4,13 @@
 
 #### Top part
 
+```yaml
 external_components:
-  - source: github://esphome/esphome@dev
-    components: [ cc1101 ]
+  - source: 
+      type: git
+      url: https://github.com/CoMPaTech/esphome_ct
+    # refresh: 3600s # only set this briefly otherwise it just refreshes daily, see https://esphome.io/components/external_components#external-components-refresh for setting refresh too low
+```
 
 #### FAN part
 
