@@ -47,7 +47,7 @@ async def to_code(config):
     rf_handler = cg.new_Pvariable(config[CONF_FAN][CONF_RF_HANDLER_ID])
     await cg.register_component(rf_handler, config)
 
-    var = cg.new_Pvariable(f"fan_{config[CONF_FAN][CONF_OUTPUT_ID]}", rf_handler, config[CONF_FAN][CONF_SPEED_COUNT], config[CONF_FAN][MAP_OFF_TO_ZERO])
+    var = cg.new_Pvariable(config[CONF_FAN][CONF_OUTPUT_ID], rf_handler, config[CONF_FAN][CONF_SPEED_COUNT], config[CONF_FAN][MAP_OFF_TO_ZERO])
     await cg.register_component(var, config)
     await fan.register_fan(var, config[CONF_FAN])
 
@@ -55,7 +55,7 @@ async def to_code(config):
     cg.add(var.set_data_pin(data_pin))
 
     for conf in config.get(CONF_BUTTONS, []):
-      button_component = cg.new_Pvariable(f"b_{config[CONF_FAN][CONF_OUTPUT_ID]}_{conf[CONF_NAME]}", rf_handler, conf[CONF_COMMAND])
+      button_component = cg.new_Pvariable(conf[CONF_NAME], rf_handler, conf[CONF_COMMAND])
       await cg.register_component(button_component, conf)
       cg.add(button_component)
 
