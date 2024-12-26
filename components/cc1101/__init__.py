@@ -4,7 +4,7 @@ import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.cpp_helpers import gpio_pin_expression
 
-from esphome.const import CONF_OUTPUT_ID, CONF_DATA_PIN
+from esphome.const import CONF_NAME, CONF_OUTPUT_ID, CONF_DATA_PIN, CONF_SPEED_COUNT, CONF_DISABLED_BY_DEFAULT, CONF_RESTORE_MODE
 
 cc1101fan_ns = cg.esphome_ns.namespace("cc1101fan")
 CC1101Fan = cc1101fan_ns.class_("CC1101Fan", cg.PollingComponent)
@@ -30,7 +30,7 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
  cv.Optional("buttons"): cv_ensure_list({
     cv.Required(CONF_NAME): cv.string,
     cv.Required("command"): cv.int_,
-    cv.Required(CONF_DATA_PIN): cv.All(pins.internal_gpio_input_pin_schema),
+#    cv.Required(CONF_DATA_PIN): cv.All(pins.internal_gpio_input_pin_schema),
  }),
 })
 
