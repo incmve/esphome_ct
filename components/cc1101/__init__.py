@@ -44,7 +44,7 @@ async def to_code(config):
 
     var = cg.new_Pvariable(config[CONF_FAN][CONF_OUTPUT_ID], config[CONF_FAN][CONF_SPEED_COUNT], config[CONF_FAN][MAP_OFF_TO_ZERO])
     await cg.register_component(var, config)
-    await fan.register(fan(var, config[CONF_FAN])
+    await fan.register_fan(var, config[CONF_FAN])
 
 
     data_pin = await gpio_pin_expression(config[CONF_FAN][CONF_DATA_PIN])
