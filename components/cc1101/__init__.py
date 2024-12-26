@@ -42,7 +42,7 @@ async def to_code(config):
     if CONF_FAN not in config:
         raise ValueError("Fan configuration is required.")
 
-    rf_handler = cg.new_Pvariable()
+    rf_handler = cg.new_Pvariable(config[CONF_FAN][CONF_OUTPUT_ID]))
     await cg.register_component(rf_handler, config)
 
     var = cg.new_Pvariable(config[CONF_FAN][CONF_OUTPUT_ID], rf_handler, config[CONF_FAN][CONF_SPEED_COUNT], config[CONF_FAN][MAP_OFF_TO_ZERO])
