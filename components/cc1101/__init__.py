@@ -1,5 +1,5 @@
 from esphome import pins
-from esphome.componens import button, fan
+from esphome.components import button, fan
 from fan import fan
 from button import button
 import esphome.config_validation as cv
