@@ -30,10 +30,10 @@ CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
     cv.Optional(CONF_RESTORE_MODE, default="ALWAYS_ON"): cv.enum(FAN_RESTORE_MODE_OPTIONS),
  }),
  cv.Optional("buttons"): cv_ensure_list({
-    cv.Required(CONF_NAME: cv.string,
-    cv.Required("command": cv.int_,
+    cv.Required(CONF_NAME): cv.string,
+    cv.Required("command"): cv.int_,
     cv.Required(CONF_DATA_PIN): cv.All(pins.internal_gpio_input_pin_schema),
- })
+ }),
 })
 
 async def to_code(config):
