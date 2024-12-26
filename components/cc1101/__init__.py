@@ -14,6 +14,7 @@ CONF_FAN = "fan"
 CONF_BUTTON = "button"
 CONF_BUTTONS = "buttons"
 CONF_COMMAND = "command"
+CONF_RF_HANDLER_ID = "rf_handler_id"
 
 # Define mapping manually
 FAN_RESTORE_MODE_OPTIONS = {
@@ -24,6 +25,7 @@ FAN_RESTORE_MODE_OPTIONS = {
 CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
   cv.Required(CONF_FAN): fan.FAN_SCHEMA.extend({
     cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(CC1101Fan),
+    cv.GenerateID(CONF_RF_HANDLER_ID): cv.declare_id("rf_handler")
     cv.Required(CONF_DATA_PIN): cv.All(pins.internal_gpio_input_pin_schema),
     cv.Required(MAP_OFF_TO_ZERO): cv.boolean,
     cv.Optional(CONF_NAME, default="Domestic Fan"): str,
@@ -42,8 +44,7 @@ async def to_code(config):
     if CONF_FAN not in config:
         raise ValueError("Fan configuration is required.")
 
-    rf_handler_id = cg.declare_id("rf_handler")
-    rf_handler = cg.new_Pvariable(rf_handler_id)
+    rf_handler = cg.new_Pvariable(CONF_RF_HANDLER_ID)
     await cg.register_component(rf_handler, config)
 
     var = cg.new_Pvariable(f"fan_{config[CONF_FAN][CONF_OUTPUT_ID]}", rf_handler, config[CONF_FAN][CONF_SPEED_COUNT], config[CONF_FAN][MAP_OFF_TO_ZERO])
