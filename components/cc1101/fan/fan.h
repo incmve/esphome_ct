@@ -1,13 +1,14 @@
 #include "esphome/core/component.h"
 #include "esphome/core/hal.h"
 #include "esphome/components/fan/fan.h"
+#include "../rf_handler.h"
 
 namespace esphome {
 namespace cc1101fan {
 
 class CC1101Fan : public PollingComponent, public fan::Fan {
  public:
-  CC1101Fan(int speed_count, bool map_off_to_zero) : speed_count_(speed_count), map_off_to_zero_(map_off_to_zero) {}
+  CC1101Fan(RFHandler *rf_handler, int speed_count, bool map_off_to_zero) : rf_handler_(rf_handler), speed_count_(speed_count), map_off_to_zero_(map_off_to_zero) {}
   void set_data_pin(InternalGPIOPin *data_pin) { data_pin_ = data_pin; }
   void setup() override;
   void update() override;
@@ -19,6 +20,7 @@ class CC1101Fan : public PollingComponent, public fan::Fan {
   static void ITHOcheck();
 
  protected:
+  RFHandler *rf_handler_;
   InternalGPIOPin *data_pin_;
   void control(const fan::FanCall &call) override;
   void write_state_();
