@@ -42,15 +42,15 @@ async def to_code(config):
     if CONF_FAN not in config:
         raise ValueError("Fan configuration is required.")
 
-    var = cg.new_Pvariable(config[CONF_FAN][CONF_OUTPUT_ID], config[CONF_FAN][CONF_SPEED_COUNT], config[CONF_FAN][MAP_OFF_TO_ZERO])
+    rf_handler = cg.new_Pvariable()
+    await cg.register_component(rf_handler, config)
+
+    var = cg.new_Pvariable(config[CONF_FAN][CONF_OUTPUT_ID], rf_handler, config[CONF_FAN][CONF_SPEED_COUNT], config[CONF_FAN][MAP_OFF_TO_ZERO])
     await cg.register_component(var, config)
     await fan.register_fan(var, config[CONF_FAN])
 
     data_pin = await gpio_pin_expression(config[CONF_FAN][CONF_DATA_PIN])
     cg.add(var.set_data_pin(data_pin))
-
-    rf_handler = var
-    cg.add(var.set_rf_handler(rf_handler))
 
     for conf in config.get(CONF_BUTTONS, []):
       button_component = cg.new_Pvariable(conf[CONF_NAME], rf_handler, conf[CONF_COMMAND])
