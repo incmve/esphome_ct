@@ -1,7 +1,7 @@
 from esphome import pins
 from esphome.components import button, fan
-from fan import fan
-from button import button
+from .fan import fan
+from .button import button
 import esphome.config_validation as cv
 
 from esphome.cpp_helpers import gpio_pin_expression
