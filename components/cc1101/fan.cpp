@@ -36,7 +36,7 @@ void CC1101Fan::setup() {
 
   rf.init();
   this->data_pin_->setup();
-  this->data_pin_->pinmode(gpio::FLAG_INPUT);
+  this->data_pin_->pin_mode(gpio::FLAG_INPUT);
   //auto gpio_num = this->data_pin_->get_pin();
   //attachInterrupt(digitalPinToInterrupt(gpio_num), []() {
   //    CC1101Fan::ITHOinterrupt();
