@@ -5,6 +5,14 @@
 #### Top part
 
 ```yaml
+esphome:
+  name: fancontrol
+  platform: ESP8266
+  board: d1_mini_lite
+  libraries:
+    - SPI
+    - Ticker
+
 external_components:
   - source: 
       type: git
@@ -16,7 +24,7 @@ external_components:
 
 ```yaml
 fan:
-  - platform: "c1101"
+  - platform: "cc1101"
     speed_count: 3
     name: "Mechanical Fan"
     data_pin: D1
