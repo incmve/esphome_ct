@@ -34,17 +34,25 @@ void CC1101Fan::setup() {
     restore->apply(*this);
   }
 
-  this->data_pin_->setup();
-
   rf.init();
+  this->data_pin_->setup();
+  this->data_pin_->pin_mode(gpio::FLAG_INPUT);
+  //auto gpio_num = this->data_pin_->get_pin();
+  //attachInterrupt(digitalPinToInterrupt(gpio_num), []() {
+  //    CC1101Fan::ITHOinterrupt();
+  //}, RISING);
+
   //this->data_pin_->attach_interrupt(CC1101Fan::ITHOinterrupt, RISING);
   // Init CC1101
-  pinMode(D1, INPUT);
-  attachInterrupt(D1, CC1101Fan::ITHOinterrupt, RISING);
+  //pinMode(D1, INPUT);
+  //attachInterrupt(D1, CC1101Fan::ITHOinterrupt, RISING);
   rf.initReceive();
 }
 
 void CC1101Fan::update() {
+  if (this->data_pin_->digital_read()) {
+    CC1101Fan::ITHOinterrupt();
+  }
 /*
     // Only publish if the state has changed
     if (fantimer->state != String(Timer).c_str()) {
