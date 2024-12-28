@@ -1,6 +1,9 @@
 #include "esphome/components/button/button.h"
 #include "../rf_handler.h"
 
+namespace esphome {
+namespace cc1101 {
+
 class CC1101Button : public button::Button, public Component {
  public:
   CC1101Button(RFHandler *rf_handler, InternalGPIOPin *data_pin, int command)
@@ -20,3 +23,6 @@ class CC1101Button : public button::Button, public Component {
   InternalGPIOPin *data_pin_;
   int command_;
 };
+
+} // cc1101
+} // esphonme
