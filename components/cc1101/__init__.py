@@ -62,7 +62,7 @@ async def to_code(config):
     cg.add(var.set_data_pin(data_pin))
 
     for conf in config.get(CONF_BUTTONS, []):
-      button_component = cg.new_Pvariable(conf[CONF_ID], rf_handler, config[CONF_FAN][CONF_DATA_PIN], conf[CONF_COMMAND])
+      button_component = cg.new_Pvariable(conf[CONF_ID], rf_handler, conf[CONF_COMMAND])
       await cg.register_component(button_component, conf)
       cg.add(button_component)
       await cg.register_component(button_component, conf)
