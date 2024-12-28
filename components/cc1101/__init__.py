@@ -25,7 +25,7 @@ FAN_RESTORE_MODE_OPTIONS = {
 CONFIG_SCHEMA = cv.COMPONENT_SCHEMA.extend({
   cv.Required(CONF_FAN): fan.FAN_SCHEMA.extend({
     cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(CC1101Fan),
-    cv.GenerateID(CONF_RF_HANDLER_ID): cv.declare_id("rf_handler"),
+    cv.GenerateID(CONF_RF_HANDLER_ID): cv.use_id("rf_handler"),
     cv.Required(CONF_DATA_PIN): cv.All(pins.internal_gpio_input_pin_schema),
     cv.Required(MAP_OFF_TO_ZERO): cv.boolean,
     cv.Optional(CONF_NAME, default="Domestic Fan"): str,
