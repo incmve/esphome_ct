@@ -4,7 +4,7 @@ import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.cpp_helpers import gpio_pin_expression
 
-from esphome.const import CONF_ID, CONF_NAME, CONF_DATA_PIN, CONF_SPEED_COUNT, CONF_DISABLED_BY_DEFAULT, CONF_RESTORE_MODE
+from esphome.const import CONF_ID, CONF_NAME, CONF_DATA_PIN, CONF_SPEED_COUNT, CONF_DISABLED_BY_DEFAULT, CONF_RESTORE_MODE, ENTITY_CATEGORY_CONFIG, ICON_CHIP, ICON_SCALE
 
 MULTI_CONF = True
 
