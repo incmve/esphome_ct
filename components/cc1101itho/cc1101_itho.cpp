@@ -1,5 +1,5 @@
 #include "esphome/core/log.h"
-#include "c1101_itho.h"
+#include "cc1101_itho.h"
 #include "Ticker.h"
 
 namespace esphome {
