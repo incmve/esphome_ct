@@ -91,9 +91,6 @@ class CC1101IthoTimer20Button : public button::Button, public Parented<CC1101Ith
 class CC1101IthoFan : public fan::Fan, public Parented<CC1101IthoComponent> {
  public:
   CC1101IthoFan(int speed_count, bool map_off_to_zero) : speed_count_(speed_count), map_off_to_zero_(map_off_to_zero) {}
-  void setup() override;
-  void update() override;
-  void loop() override;
   fan::FanTraits get_traits() override;
 
   void set_fan_speed(int speed);
