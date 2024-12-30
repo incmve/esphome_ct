@@ -8,7 +8,16 @@
 
 ## How-to using Home Assistant
 
-Ensure you have the hardware ready ([Mechanics](#mechanics)) and the `esphome` add-on installed. Next follow the ESPHome YAML configuration part
+Ensure you have the hardware ready ([Mechanics](#mechanics)) and the `esphome` add-on installed. Next follow the ESPHome YAML configuration part.
+
+When operational from a HA point of view:
+
+- [ ] Power-off your mechanical fan unit
+- [ ] Ensure you are able to send the join command from HA (i.e., have your mobile phone or tablet with you)
+- [ ] Power-up the mechanical fan unit
+- [ ] *Within* 30 seconds of powering the unit, send the join command
+- [ ] The fan should respond by varying it's speed to indicate you joined successfully
+- [ ] Test if you can send other commands.
 
 ## Current status:
 
