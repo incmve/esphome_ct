@@ -199,7 +199,7 @@ void CC1101Fan::startResetTimer(uint16_t seconds) {
     ESP_LOGD("cc1101_fan", "Timer was active and has been canceled from new timer");
   }
   timer_active_ = true;
-  reset_timer_.once(1000, [this, seconds]() { 
+  reset_timer_.once(1, [this, seconds]() { 
     ESP_LOGD("cc1101_fan", "Inside ticker lambda");
     this->resetFanSpeed(seconds); 
   });
