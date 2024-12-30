@@ -219,10 +219,10 @@ void CC1101Fan::set_output(void *output) {
 void CC1101Fan::ITHOcheck() {
   //noInterrupts();
   if (rf.checkForNewPacket()) {
-    ESP_LOGD("c1101_fan", "There is a packet with cmd %s and pkt %s", cmd, pkt);
     IthoCommand cmd = rf.getLastCommand();
     IthoPacket pkt = rf.getLastPacket();
     LastID = rf.getLastIDstr();
+    ESP_LOGD("c1101_fan", "There is a packet with cmd %s and pkt %s with LastId %s", cmd, pkt, LastID);
     switch (cmd) {
       case IthoUnknown:
         break;
