@@ -194,10 +194,13 @@ void CC1101Fan::send_other_command(uint8_t other_command) {
 }
 
 void CC1101Fan::startResetTimer(uint16_t seconds) {
-  timer_active_ = true;
   ESP_LOGD("cc1101_fan", "Button timer started for %d seconds", seconds);
-  reset_timer_.detach();
-  reset_timer_.once(seconds * 1, [this, seconds]() { 
+  if (timer_active_) {
+    reset_timer_.detach(); 
+    ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+  }
+  timer_active_ = true;
+  reset_timer_.once(1000, [this, seconds]() { 
     ESP_LOGD("cc1101_fan", "Inside ticker lambda");
     this->resetFanSpeed(seconds); 
   });
