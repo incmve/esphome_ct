@@ -151,7 +151,7 @@ void CC1101Fan::set_fan_speed(int speed) {
     }
     if (timer_active_) {
       reset_timer_.detach(); 
-      ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+      ESP_LOGD("cc1101_fan", "Timer was active and has been canceled (other manual command send by us)");
     }
     this->LastSpeed = this->Speed;
     this->Speed = speed;
@@ -197,7 +197,7 @@ void CC1101Fan::startResetTimer(uint16_t seconds) {
   ESP_LOGD("cc1101_fan", "Button timer started for %d seconds", seconds);
   if (timer_active_) {
     reset_timer_.detach(); 
-    ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+    ESP_LOGD("cc1101_fan", "Timer was active and has been canceled from new timer");
   }
   timer_active_ = true;
   reset_timer_.once(1000, [this, seconds]() { 
@@ -236,7 +236,7 @@ void CC1101Fan::ITHOcheck() {
         ESP_LOGD("c1101_fan", "1 / Low (or 0 / Off)");
         if (timer_active_) {
           reset_timer_.detach();  // Cancel the timer if it's active
-          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled received remote sending low");
         }
         this->LastSpeed = this->Speed;
         this->Speed = 1;
@@ -245,7 +245,7 @@ void CC1101Fan::ITHOcheck() {
         ESP_LOGD("c1101_fan", "2 / Medium");
         if (timer_active_) {
           reset_timer_.detach();  // Cancel the timer if it's active
-          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled received remote sending medium");
         }
         this->LastSpeed = this->Speed;
         this->Speed = 2;
@@ -254,7 +254,7 @@ void CC1101Fan::ITHOcheck() {
         ESP_LOGD("c1101_fan", "3 / High");
         if (timer_active_) {
           reset_timer_.detach();  // Cancel the timer if it's active
-          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled received remote sending high");
         }
         this->LastSpeed = this->Speed;
         this->Speed = 3;
@@ -263,7 +263,7 @@ void CC1101Fan::ITHOcheck() {
         ESP_LOGD("c1101_fan", "4 / Full");
         if (timer_active_) {
           reset_timer_.detach();  // Cancel the timer if it's active
-          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled received remote sending full");
         }
         this->LastSpeed = this->Speed;
         this->Speed = 4;
@@ -271,18 +271,21 @@ void CC1101Fan::ITHOcheck() {
       case IthoTimer1:
         ESP_LOGD("c1101_fan", "Timer1");
         startResetTimer(Time1);
+        ESP_LOGD("cc1101_fan", "Received remote sending timer1, setting our own");
         this->LastSpeed = this->Speed;
         this->Speed = 3;
         break;
       case IthoTimer2:
         ESP_LOGD("c1101_fan", "Timer2");
         startResetTimer(Time2);
+        ESP_LOGD("cc1101_fan", "Received remote sending timer2, setting our own");
         this->LastSpeed = this->Speed;
         this->Speed = 3;
         break;
       case IthoTimer3:
         ESP_LOGD("c1101_fan", "Timer3");
         startResetTimer(Time3);
+        ESP_LOGD("cc1101_fan", "Received remote sending timer3, setting our own");
         this->LastSpeed = this->Speed;
         this->Speed = 3;
         break;
