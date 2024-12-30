@@ -270,22 +270,22 @@ void CC1101Fan::ITHOcheck() {
         break;
       case IthoTimer1:
         ESP_LOGD("c1101_fan", "Timer1");
-        startResetTimer(Time1);
         ESP_LOGD("cc1101_fan", "Received remote sending timer1, setting our own");
+        startResetTimer(Time1);
         this->LastSpeed = this->Speed;
         this->Speed = 3;
         break;
       case IthoTimer2:
         ESP_LOGD("c1101_fan", "Timer2");
-        startResetTimer(Time2);
         ESP_LOGD("cc1101_fan", "Received remote sending timer2, setting our own");
+        startResetTimer(Time2);
         this->LastSpeed = this->Speed;
         this->Speed = 3;
         break;
       case IthoTimer3:
         ESP_LOGD("c1101_fan", "Timer3");
-        startResetTimer(Time3);
         ESP_LOGD("cc1101_fan", "Received remote sending timer3, setting our own");
+        startResetTimer(Time3);
         this->LastSpeed = this->Speed;
         this->Speed = 3;
         break;
