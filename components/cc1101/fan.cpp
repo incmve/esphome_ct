@@ -23,7 +23,8 @@ String LastID = "";
 bool timer_active_;
 
 // Timer values for hardware timer in Fan
-uint16_t Time1 = 10*60;
+//uint16_t Time1 = 10*60;
+uint16_t Time1 = 20;
 uint16_t Time2 = 20*60;
 uint16_t Time3 = 30*60;
 
