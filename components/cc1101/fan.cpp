@@ -196,12 +196,13 @@ void CC1101Fan::send_other_command(uint8_t other_command) {
 void CC1101Fan::startResetTimer(uint16_t seconds) {
   timer_active_ = true;
   ESP_LOGD("cc1101_fan", "Button timer started for %d seconds", seconds);
-  reset_timer_.once(seconds * 1000, [this, seconds]() { this->resetFanSpeed(seconds); });
+  reset_timer_.once(seconds * 1, [this, seconds]() { this->resetFanSpeed(seconds); });
   this->publish_state();
 }
 
 void CC1101Fan::resetFanSpeed(uint16_t seconds) {
       this->speed = 1;
+      this->state = 1;
       timer_active_ = false;
       ESP_LOGD("cc1101_fan", "Timer of %d seconds lapsed, assuming back to normal speed", seconds);
       publish_state();
@@ -218,7 +219,7 @@ void CC1101Fan::set_output(void *output) {
 void CC1101Fan::ITHOcheck() {
   //noInterrupts();
   if (rf.checkForNewPacket()) {
-    ESP_LOGD("c1101_fan", "There is a packet");
+    ESP_LOGD("c1101_fan", "There is a packet with cmd %s and pkt %s", cmd, pkt);
     IthoCommand cmd = rf.getLastCommand();
     IthoPacket pkt = rf.getLastPacket();
     LastID = rf.getLastIDstr();
