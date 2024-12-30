@@ -37,6 +37,10 @@ void CC1101Fan::setup() {
   rf.init();
   this->data_pin_->setup();
   this->data_pin_->pin_mode(gpio::FLAG_INPUT);
+  ITHOticker.attach_ms(100, std::bind(&CC1101Fan::check_pin, this));
+  
+  //this->data_pin_->attach_interrupt(CC1101Fan::ITHOinterrupt, gpio::TriggerMode::RISING);
+
   //auto gpio_num = this->data_pin_->get_pin();
   //attachInterrupt(digitalPinToInterrupt(gpio_num), []() {
   //    CC1101Fan::ITHOinterrupt();
@@ -49,10 +53,13 @@ void CC1101Fan::setup() {
   rf.initReceive();
 }
 
-void CC1101Fan::update() {
+void CC1101Fan::check_pin() {
   if (this->data_pin_->digital_read()) {
     CC1101Fan::ITHOinterrupt();
   }
+}
+
+void CC1101Fan::update() {
 /*
     // Only publish if the state has changed
     if (fantimer->state != String(Timer).c_str()) {
@@ -139,6 +146,26 @@ void CC1101Fan::set_fan_speed(int speed) {
   } 
 }
 
+void CC1101Fan::send_other_command(uint8_t other_command) {
+  switch (other_command) {
+    case 0: // join
+      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Join", other_command);
+      rf.sendCommand(IthoJoin);
+      break;
+    case 1: // timer 1
+      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer1", other_command);
+      rf.sendCommand(IthoTimer1);
+      break;
+    case 2: // timer 2
+      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer2", other_command);
+      rf.sendCommand(IthoTimer2);
+      break;
+    case 3: // timer 3
+      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer3", other_command);
+      rf.sendCommand(IthoTimer3);
+      break;
+  }
+}
 
 void CC1101Fan::set_output(void *output) {
   // No-op: This method is required by the ESPHome build system but is unused.
@@ -149,52 +176,56 @@ void IRAM_ATTR CC1101Fan::ITHOinterrupt() {
 }
 
 void CC1101Fan::ITHOcheck() {
-  noInterrupts();
+  //noInterrupts();
   if (rf.checkForNewPacket()) {
+    ESP_LOGD("c1101_fan", "There is a packet");
     IthoCommand cmd = rf.getLastCommand();
     IthoPacket pkt = rf.getLastPacket();
     LastID = rf.getLastIDstr();
     switch (cmd) {
       case IthoUnknown:
-        //ESP_LOGD("custom", "Unknown state, packet is");
+        ESP_LOGD("c1101_fan", "Unknown Itho packet found");
         break;
       case IthoLow:
-        ESP_LOGD("custom", "1 / Low (or 0 / Off)");
+        ESP_LOGD("c1101_fan", "1 / Low (or 0 / Off)");
         Timer = 0;
         break;
       case IthoMedium:
-        ESP_LOGD("custom", "2 / Medium");
+        ESP_LOGD("c1101_fan", "2 / Medium");
         Timer = 0;
         break;
       case IthoHigh:
-        ESP_LOGD("custom", "3 / High");
+        ESP_LOGD("c1101_fan", "3 / High");
         Timer = 0;
         break;
       case IthoFull:
-        ESP_LOGD("custom", "4 / Full");
+        ESP_LOGD("c1101_fan", "4 / Full");
         Timer = 0;
         break;
       case IthoTimer1:
-        ESP_LOGD("custom", "Timer1");
+        ESP_LOGD("c1101_fan", "Timer1");
         Timer = Time1;
         break;
       case IthoTimer2:
-        ESP_LOGD("custom", "Timer2");
+        ESP_LOGD("c1101_fan", "Timer2");
         Timer = Time2;
         break;
       case IthoTimer3:
-        ESP_LOGD("custom", "Timer3");
+        ESP_LOGD("c1101_fan", "Timer3");
         Timer = Time3;
         break;
       case IthoJoin:
+        ESP_LOGD("c1101_fan", "IthoJoin spotted");
         break;
       case IthoLeave:
+        ESP_LOGD("c1101_fan", "IthoLeave spotted");
         break;
       default:
+        ESP_LOGD("c1101_fan", "Other command spotted");
         break;
     }
   }
-  interrupts();
+  //interrupts();
 };
 
 } // namespace cc1101fan
