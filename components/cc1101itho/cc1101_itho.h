@@ -2,8 +2,6 @@
 
 #include "esphome/core/component.h"
 #include "esphome/core/gpio.h"
-#include "esphome/components/button/button.h"
-#include "esphome/components/fan/fan.h"
 
 namespace esphome {
 namespace c1101itho {
