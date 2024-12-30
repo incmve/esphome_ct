@@ -222,7 +222,6 @@ void CC1101Fan::ITHOcheck() {
     IthoCommand cmd = rf.getLastCommand();
     IthoPacket pkt = rf.getLastPacket();
     LastID = rf.getLastIDstr();
-    ESP_LOGD("c1101_fan", "There is a packet with cmd %s with LastId %s", cmd, LastID);
     switch (cmd) {
       case IthoUnknown:
         break;
