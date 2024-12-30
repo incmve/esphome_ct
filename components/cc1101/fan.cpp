@@ -226,6 +226,9 @@ void CC1101Fan::ITHOcheck() {
     IthoCommand cmd = rf.getLastCommand();
     IthoPacket pkt = rf.getLastPacket();
     LastID = rf.getLastIDstr();
+    ESP_LOGD("c1101_fan", "Debug - RemoteID1: %s", converter(pkt.deviceId1).c_str());
+    ESP_LOGD("c1101_fan", "Debug - RemoteID2: %s", converter(pkt.deviceId2).c_str());
+    ESP_LOGD("c1101_fan", "Debug - LastID: %s", LastID.c_str());
     switch (cmd) {
       case IthoUnknown:
         break;
