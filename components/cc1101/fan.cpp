@@ -221,6 +221,10 @@ void CC1101Fan::set_output(void *output) {
 //	ITHOticker.once_ms(10, CC1101Fan::ITHOcheck);
 //}
 
+String converter(uint8_t *str){
+	return String((char *)str);
+}
+
 void CC1101Fan::ITHOcheck() {
   //noInterrupts();
   if (rf.checkForNewPacket()) {
