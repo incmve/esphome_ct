@@ -20,13 +20,15 @@ class CC1101Fan : public PollingComponent, public fan::Fan {
   void set_output(void *output);
   void set_fan_speed(int speed);
   void send_other_command(uint8_t other_command);
-  static void ITHOinterrupt();
-  static void ITHOcheck();
+//  static void ITHOinterrupt();
+  void ITHOcheck();
 
  protected:
   void control(const fan::FanCall &call) override;
   void write_state_();
   void publish_state();
+  void resetFanSpeed(uint16_t seconds);
+  void startResetTimer(uint16_t seconds);
   int speed_count_{};
   bool map_off_to_zero_{};
   //fan::FanTraits traits_;

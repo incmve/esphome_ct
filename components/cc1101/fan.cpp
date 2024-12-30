@@ -7,25 +7,25 @@ namespace esphome {
 namespace cc1101fan {
 
 IthoCC1101 rf;
-void ITHOinterrupt() IRAM_ATTR;
+//void ITHOinterrupt() IRAM_ATTR;
 void ITHOcheck();
 
 // extra for interrupt handling
 //bool ITHOhasPacket = false;
 Ticker ITHOticker;
-int Timer=0;
+Ticker reset_timer_;
 int LastIDindex = 0;
 int OldLastIDindex = 0;
 long LastPublish=0; 
 bool InitRunned = false;
 IthoPacket pkt;
 String LastID = "";
+bool timer_active_;
 
 // Timer values for hardware timer in Fan
-#define Time1      10*60
-#define Time2      20*60
-#define Time3      30*60
-
+uint16_t Time1 = 10*60;
+uint16_t Time2 = 20*60;
+uint16_t Time3 = 30*60;
 
 void CC1101Fan::setup() {
   auto restore = this->restore_state_();
@@ -37,7 +37,8 @@ void CC1101Fan::setup() {
   rf.init();
   this->data_pin_->setup();
   this->data_pin_->pin_mode(gpio::FLAG_INPUT);
-  ITHOticker.attach_ms(100, std::bind(&CC1101Fan::check_pin, this));
+//  ITHOticker.attach_ms(100, std::bind(&CC1101Fan::check_pin, this));
+
   
   //this->data_pin_->attach_interrupt(CC1101Fan::ITHOinterrupt, gpio::TriggerMode::RISING);
 
@@ -53,13 +54,15 @@ void CC1101Fan::setup() {
   rf.initReceive();
 }
 
-void CC1101Fan::check_pin() {
-  if (this->data_pin_->digital_read()) {
-    CC1101Fan::ITHOinterrupt();
-  }
-}
+//void CC1101Fan::check_pin() {
+//  if (this->data_pin_->digital_read()) {
+//    CC1101Fan::ITHOinterrupt();
+//  }
+//}
 
 void CC1101Fan::update() {
+    CC1101Fan::ITHOcheck();
+
 /*
     // Only publish if the state has changed
     if (fantimer->state != String(Timer).c_str()) {
@@ -73,9 +76,18 @@ void CC1101Fan::update() {
 }
 
 void CC1101Fan::publish_state() {
-  this->state =  this->Speed;
-  ESP_LOGD("cc1101_fan", "Publishing state: %d", this->state);
-  this->state_callback_(); // Notify ESPHome about the state change
+  auto current_state = this->state;
+  auto current_speed = this->speed;
+  this->speed = 0;
+  this->state = 0;
+  if (this->Speed >= 0) { 
+    this->speed = this->Speed;
+    this->state = 1;
+  }
+  if (current_state != this->state || current_speed != this->speed ) {
+    ESP_LOGD("cc1101_fan", "Publishing state: %d (was %d) from speed %d (was %d) ", this->state, current_state, this->Speed, current_speed);
+    this->state_callback_(); // Notify ESPHome about the state change
+  }
 
 }
 
@@ -137,10 +149,13 @@ void CC1101Fan::set_fan_speed(int speed) {
         rf.sendCommand(IthoLow);
         break;
     }
+    if (timer_active_) {
+      reset_timer_.detach(); 
+      ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+    }
     this->LastSpeed = this->Speed;
     this->Speed = speed;
     if ( this->map_off_to_zero_ && speed == 0 ) this->Speed = 1;
-    // Timer = 0;
   
     this->publish_state();
   } 
@@ -155,25 +170,50 @@ void CC1101Fan::send_other_command(uint8_t other_command) {
     case 1: // timer 1
       ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer1", other_command);
       rf.sendCommand(IthoTimer1);
+      this->speed = 1.0;
+      publish_state();
+      startResetTimer(Time1);
+
       break;
     case 2: // timer 2
       ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer2", other_command);
       rf.sendCommand(IthoTimer2);
+      this->speed = 1.0;
+      publish_state();
+      startResetTimer(Time2);
+
       break;
     case 3: // timer 3
       ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer3", other_command);
       rf.sendCommand(IthoTimer3);
+      this->speed = 1.0;
+      publish_state();
+      startResetTimer(Time3);
       break;
   }
+}
+
+void CC1101Fan::startResetTimer(uint16_t seconds) {
+  timer_active_ = true;
+  ESP_LOGD("cc1101_fan", "Button timer started for %d seconds", seconds);
+  reset_timer_.once(seconds * 1000, [this, seconds]() { this->resetFanSpeed(seconds); });
+  this->publish_state();
+}
+
+void CC1101Fan::resetFanSpeed(uint16_t seconds) {
+      this->speed = 1;
+      timer_active_ = false;
+      ESP_LOGD("cc1101_fan", "Timer of %d seconds lapsed, assuming back to normal speed", seconds);
+      publish_state();
 }
 
 void CC1101Fan::set_output(void *output) {
   // No-op: This method is required by the ESPHome build system but is unused.
 }
 
-void IRAM_ATTR CC1101Fan::ITHOinterrupt() {
-	ITHOticker.once_ms(10, CC1101Fan::ITHOcheck);
-}
+//void IRAM_ATTR CC1101Fan::ITHOinterrupt() {
+//	ITHOticker.once_ms(10, CC1101Fan::ITHOcheck);
+//}
 
 void CC1101Fan::ITHOcheck() {
   //noInterrupts();
@@ -184,35 +224,60 @@ void CC1101Fan::ITHOcheck() {
     LastID = rf.getLastIDstr();
     switch (cmd) {
       case IthoUnknown:
-        ESP_LOGD("c1101_fan", "Unknown Itho packet found");
         break;
       case IthoLow:
         ESP_LOGD("c1101_fan", "1 / Low (or 0 / Off)");
-        Timer = 0;
+        if (timer_active_) {
+          reset_timer_.detach();  // Cancel the timer if it's active
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+        }
+        this->LastSpeed = this->Speed;
+        this->Speed = 1;
         break;
       case IthoMedium:
         ESP_LOGD("c1101_fan", "2 / Medium");
-        Timer = 0;
+        if (timer_active_) {
+          reset_timer_.detach();  // Cancel the timer if it's active
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+        }
+        this->LastSpeed = this->Speed;
+        this->Speed = 2;
         break;
       case IthoHigh:
         ESP_LOGD("c1101_fan", "3 / High");
-        Timer = 0;
+        if (timer_active_) {
+          reset_timer_.detach();  // Cancel the timer if it's active
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+        }
+        this->LastSpeed = this->Speed;
+        this->Speed = 3;
         break;
       case IthoFull:
         ESP_LOGD("c1101_fan", "4 / Full");
-        Timer = 0;
+        if (timer_active_) {
+          reset_timer_.detach();  // Cancel the timer if it's active
+          ESP_LOGD("cc1101_fan", "Timer was active and has been canceled");
+        }
+        this->LastSpeed = this->Speed;
+        this->Speed = 4;
         break;
       case IthoTimer1:
         ESP_LOGD("c1101_fan", "Timer1");
-        Timer = Time1;
+        startResetTimer(Time1);
+        this->LastSpeed = this->Speed;
+        this->Speed = 3;
         break;
       case IthoTimer2:
         ESP_LOGD("c1101_fan", "Timer2");
-        Timer = Time2;
+        startResetTimer(Time2);
+        this->LastSpeed = this->Speed;
+        this->Speed = 3;
         break;
       case IthoTimer3:
         ESP_LOGD("c1101_fan", "Timer3");
-        Timer = Time3;
+        startResetTimer(Time3);
+        this->LastSpeed = this->Speed;
+        this->Speed = 3;
         break;
       case IthoJoin:
         ESP_LOGD("c1101_fan", "IthoJoin spotted");
@@ -224,6 +289,7 @@ void CC1101Fan::ITHOcheck() {
         ESP_LOGD("c1101_fan", "Other command spotted");
         break;
     }
+    this->publish_state();
   }
   //interrupts();
 };
