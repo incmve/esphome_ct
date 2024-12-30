@@ -205,7 +205,7 @@ void CC1101Fan::startResetTimer(uint16_t seconds) {
 }
 
 void CC1101Fan::resetFanSpeed(uint16_t seconds) {
-      this->speed = 1;
+      this->speed = 0;
       this->state = 1;
       timer_active_ = false;
       ESP_LOGD("cc1101_fan", "Timer of %d seconds lapsed, assuming back to normal speed", seconds);
