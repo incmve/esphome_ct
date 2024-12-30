@@ -124,9 +124,5 @@ button:
 
 # Known limitations
 =======
-Doesn't appear to 'read' (listen) to (other) remotes sending commands (even though the code is there)
-
 Just low/medium/high ... set speed_count to 4 if you need full
 If you map off to zero, 'low' and 'off' are the same (i.e., mine only has 3 speeds - there is no off)
-
-
