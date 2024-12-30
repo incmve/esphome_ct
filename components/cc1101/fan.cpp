@@ -129,7 +129,7 @@ void CC1101Fan::control(const fan::FanCall &call) {
 }
 
 void CC1101Fan::set_fan_speed(int speed) {
-  ESP_LOGD("cc1101_fan", "RF called witht %d while last is %d and speed assumed at %d", speed, this->LastSpeed, this->Speed);
+  ESP_LOGD("cc1101_fan", "RF called with %d while last is %d and speed assumed at %d", speed, this->LastSpeed, this->Speed);
   if (speed != this->LastSpeed ) {
     // Handle speed control
     switch (speed) {
@@ -164,11 +164,11 @@ void CC1101Fan::set_fan_speed(int speed) {
 void CC1101Fan::send_other_command(uint8_t other_command) {
   switch (other_command) {
     case 0: // join
-      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Join", other_command);
+      ESP_LOGD("cc1101_fan", "RF called with %d, sending Join", other_command);
       rf.sendCommand(IthoJoin);
       break;
     case 1: // timer 1
-      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer1", other_command);
+      ESP_LOGD("cc1101_fan", "RF called with %d, sending Timer1", other_command);
       rf.sendCommand(IthoTimer1);
       this->speed = 1.0;
       publish_state();
@@ -176,7 +176,7 @@ void CC1101Fan::send_other_command(uint8_t other_command) {
 
       break;
     case 2: // timer 2
-      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer2", other_command);
+      ESP_LOGD("cc1101_fan", "RF called with %d, sending Timer2", other_command);
       rf.sendCommand(IthoTimer2);
       this->speed = 1.0;
       publish_state();
@@ -184,7 +184,7 @@ void CC1101Fan::send_other_command(uint8_t other_command) {
 
       break;
     case 3: // timer 3
-      ESP_LOGD("cc1101_fan", "RF called witht %d, sending Timer3", other_command);
+      ESP_LOGD("cc1101_fan", "RF called with %d, sending Timer3", other_command);
       rf.sendCommand(IthoTimer3);
       this->speed = 1.0;
       publish_state();
@@ -194,7 +194,6 @@ void CC1101Fan::send_other_command(uint8_t other_command) {
 }
 
 void CC1101Fan::startResetTimer(uint16_t seconds) {
-  ESP_LOGD("cc1101_fan", "Button timer started for %d seconds", seconds);
   if (timer_active_) {
     reset_timer_.detach(); 
     ESP_LOGD("cc1101_fan", "Timer was active and has been canceled from new timer");
@@ -204,6 +203,7 @@ void CC1101Fan::startResetTimer(uint16_t seconds) {
     ESP_LOGD("cc1101_fan", "Inside ticker lambda");
     this->resetFanSpeed(seconds); 
   });
+  ESP_LOGD("cc1101_fan", "Button timer started for %d seconds", seconds);
   this->publish_state();
 }
 
