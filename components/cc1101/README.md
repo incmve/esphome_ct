@@ -123,6 +123,17 @@ button:
 ```
 
 # Known limitations
-=======
+
 Just low/medium/high ... set speed_count to 4 if you need full
 If you map off to zero, 'low' and 'off' are the same (i.e., mine only has 3 speeds - there is no off)
+
+## References (from archived repo)
+
+ESPHome usable library for C1101/ITHO: https://github.com/CoMPaTech/esphome_itho
+
+This is mostly from https://github.com/jodur/ESPEASY_Plugin_ITHO/
+
+Although backtracked to (amongst other forks) : https://github.com/adri/IthoEcoFanRFT / https://github.com/supersjimmie/IthoEcoFanRFT
+
+
+
