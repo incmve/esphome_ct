@@ -3,6 +3,7 @@
  */
 
 #include "CC1101.h"
+#include <Arduino.h>
 
 // default constructor
 CC1101::CC1101()
