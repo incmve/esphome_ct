@@ -17,7 +17,7 @@ FAN_RESTORE_MODE_OPTIONS = {
     "ALWAYS_OFF": fan.FanRestoreMode.ALWAYS_OFF,
 }
 
-CONFIG_SCHEMA = fan.fan_schema.extend({
+CONFIG_SCHEMA = fan.fan_schema.(CC1101Fan).extend({
   cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(CC1101Fan),
   cv.Required(CONF_DATA_PIN): cv.All(pins.internal_gpio_input_pin_schema),
   cv.Required(MAP_OFF_TO_ZERO): cv.boolean,
