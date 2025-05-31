@@ -1,0 +1,44 @@
+external_components:
+- source:
+    type: git
+    url: https://github.com/compatech/esphome_ct
+    ref: rc
+  components: [ ithofan ]
+  refresh: 0s
+- source: github://pr#6300
+  components: [ cc1101 ]
+
+spi:
+  clk_pin: GPIO14
+  miso_pin: GPIO12
+  mosi_pin: GPIO13
+
+cc1101:
+  id: cc1101_id
+  cs_pin: GPIO15
+  bandwidth: 200
+  frequency: 433420
+
+remote_receiver:
+  pin: GPIO04
+  filter: 200us
+  idle: 6000us
+
+#remote_transmitter:
+#  pin: GPIO13
+#  carrier_duty_percent: 100%
+#  on_transmit:
+#    then:
+#      - cc1101.begin_tx: cc1101_id
+#  on_complete:
+#    then:
+#      - cc1101.end_tx: cc1101_id
+
+fan:
+  - platform: template
+    name: "Virtual Fan"
+    speed_count: 3
+    on_state:
+      - do something
+    on_speed_set:
+      - do something
