@@ -112,7 +112,7 @@ void CC1101Fan::control(const fan::FanCall &call) {
         ESP_LOGD("cc1101_fan", "Correcting with map off to zero speed to 0");
         Speed = 0;
     }
-    if ( Speed == -1 ) {
+    if ( Speed == 255 ) {
         ESP_LOGD("cc1101_fan", "Correcting speed to 0");
         Speed = 0;
     }
