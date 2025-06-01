@@ -103,16 +103,16 @@ fan::FanTraits CC1101Fan::get_traits() {
 
 void CC1101Fan::control(const fan::FanCall &call) {
   auto State = call.get_state() ? "ON" : "OFF";
-  auto Speed = call.get_speed().has_value() ? *call.get_speed() : -1;
+  auto Speed = call.get_speed().has_value() ? *call.get_speed() : 255;
   ESP_LOGD("cc1101_fan", "Call state: %s, speed: %d", State, Speed);
          
-  if (call.get_speed().has_value() || ( strcmp(State,"ON") && Speed == -1 ) ) {
+  if (call.get_speed().has_value() || ( strcmp(State,"ON") && Speed == 255 ) ) {
     // If fans don't have off, just lowest level
-    if ( this->map_off_to_zero_ && Speed == -1 ) {
+    if ( this->map_off_to_zero_ && Speed == 255 ) {
         ESP_LOGD("cc1101_fan", "Correcting with map off to zero speed to 0");
         Speed = 0;
     }
-    if ( Speed == -1 ) {
+    if ( Speed == 255 ) {
         ESP_LOGD("cc1101_fan", "Correcting speed to 0");
         Speed = 0;
     }
