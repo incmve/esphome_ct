@@ -33,8 +33,8 @@ class CC1101Fan : public PollingComponent, public fan::Fan {
   bool map_off_to_zero_{};
   //fan::FanTraits traits_;
   std::set<std::string> preset_modes_{};
-  int Speed = -1;
-  int LastSpeed = -1;
+  uint8_t Speed = -1;
+  uint8_t LastSpeed = -1;
   //static CC1101Fan *instance_;
 };
 
