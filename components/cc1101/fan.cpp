@@ -80,7 +80,7 @@ void CC1101Fan::publish_state() {
   auto current_speed = this->speed;
   this->speed = 0;
   this->state = 0;
-  if (this->Speed >= 0) { 
+  if (this->Speed != INVALID_SPEED) {
     this->speed = this->Speed;
     this->state = 1;
   }
